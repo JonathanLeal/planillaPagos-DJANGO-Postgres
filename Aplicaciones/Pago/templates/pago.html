@@ -1,0 +1,72 @@
+<!-- pago.html (plantilla HTML) -->
+
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-3">
+    <div class="card">
+        <div class="card-header">
+            <center>
+                Sacar pagos
+            </center>
+        </div>
+        <div class="card-body">
+            <form action="/pago" method="POST">
+                {% csrf_token %}
+                <center>
+                    <select name="empleado">
+                        <option value="">Seleccione...</option>
+                        {% for empleado in empleados %}
+                            <option value="{{ empleado.id }}">{{ empleado.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                    <div class="mt-2">
+                        <input type="submit" name="ver" value="Ver empleado" class="btn btn-info">
+                    </div>
+                </center>
+            </form>
+            {% if empleadoEncontrado %}
+            <table class="table mt-3">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Codigo</th>
+                        <th>Salario</th>
+                        <th>Cargo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{ empleadoEncontrado.id }}</td>
+                        <td>{{ empleadoEncontrado.nombre }}</td>
+                        <td>{{ empleadoEncontrado.apellido }}</td>
+                        <td>{{ empleadoEncontrado.codigo }}</td>
+                        <td>{{ empleadoEncontrado.salario }}</td>
+                        <td>{{ empleadoEncontrado.cargo__nombre_cargo }}</td>
+                    </tr>
+                </tbody>
+            </table>
+			<div class="mt-2">
+			    {% if empleadoEncontrado %}
+			    <form action="/calcular" method="POST" style="display: inline;">
+			        {% csrf_token %}
+			        <input type="hidden" name="empleado_id" value="{{ empleadoEncontrado.id }}">
+			        <input type="submit" value="Calcular Descuentos" class="btn btn-success">
+			    </form>
+			    {% if descuentosCalculados %}
+				    <h3>Resultados del cálculo:</h3>
+				    <p>Descuento AFP: {{ descuentosCalculados.desAFP }}</p>
+				    <p>Descuento RENTA: {{ descuentosCalculados.desRENTA }}</p>
+				    <p>Descuento ISSS: {{ descuentosCalculados.desISSS }}</p>
+				    <p>Total de descuentos: {{ descuento }}</p>
+				    <p>Pago Final: {{ final }}</p>
+				{% endif %}
+			    {% endif %}
+			</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
